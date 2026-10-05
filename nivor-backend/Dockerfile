@@ -4,7 +4,7 @@ COPY pom.xml .
 COPY .mvn .mvn
 COPY mvnw .
 COPY src src
-RUN chmod +x mvnw && ./mvnw -B -DskipTests package
+RUN unset MAVEN_CONFIG && chmod +x mvnw && ./mvnw -B -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
