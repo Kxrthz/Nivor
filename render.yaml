@@ -1,34 +1,49 @@
+databases:
+  - name: nivor-free-db
+    databaseName: nivor
+    user: nivor_app
+    plan: free
+    region: singapore
+
 services:
   - type: web
-    name: nivor-api
+    name: nivor-free-api
     runtime: docker
+    plan: free
+    region: singapore
     dockerfilePath: ./nivor-backend/Dockerfile
     dockerContext: ./nivor-backend
     healthCheckPath: /api/health
     envVars:
-      - key: DB_URL
-        sync: false
+      - key: DB_HOST
+        fromDatabase:
+          name: nivor-free-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: nivor-free-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: nivor-free-db
+          property: database
       - key: DB_USERNAME
-        sync: false
+        fromDatabase:
+          name: nivor-free-db
+          property: user
       - key: DB_PASSWORD
-        sync: false
+        fromDatabase:
+          name: nivor-free-db
+          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION_MS
         value: "86400000"
       - key: FRONTEND_URL
-        sync: false
+        value: https://nivor-iota.vercel.app
       - key: FILE_STORAGE_PROVIDER
         value: local
       - key: FILE_STORAGE_LOCAL_PATH
-        value: /var/data/nivor-uploads
+        value: /tmp/nivor-uploads
       - key: AI_PROVIDER
         value: ""
-      - key: AI_API_KEY
-        sync: false
-      - key: AI_MODEL
-        sync: false
-    disk:
-      name: nivor-uploads
-      mountPath: /var/data
-      sizeGB: 1
