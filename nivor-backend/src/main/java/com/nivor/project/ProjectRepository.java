@@ -1,0 +1,3 @@
+package com.nivor.project;
+import java.util.List;import java.util.Optional;import org.springframework.data.jpa.repository.JpaRepository;import org.springframework.data.jpa.repository.Modifying;import org.springframework.data.jpa.repository.Query;
+public interface ProjectRepository extends JpaRepository<Project,Long>{List<Project> findAllByUser_IdOrderByDeadlineAsc(Long id);List<Project> findAllByUser_IdAndWorkspace_Id(Long userId,Long workspaceId);Optional<Project> findByIdAndUser_Id(Long id,Long userId);@Modifying @Query("update Project p set p.workspace = null where p.workspace.id = :workspaceId and p.user.id = :userId")int clearWorkspaceForUser(Long workspaceId,Long userId);}

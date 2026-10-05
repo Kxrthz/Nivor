@@ -1,0 +1,5 @@
+import { useMutation,useQuery,useQueryClient } from '@tanstack/react-query';import { focusApi } from '../lib/api/focusApi'
+export const focusKeys={sessions:['focus','sessions'],summary:['focus','summary']};export function useFocusSessions(){return useQuery({queryKey:focusKeys.sessions,queryFn:focusApi.sessions})}export function useFocusSummary(){return useQuery({queryKey:focusKeys.summary,queryFn:focusApi.summary})}export function useFocusStart(){const q=useQueryClient();return useMutation({mutationFn:focusApi.start,onSuccess:()=>q.invalidateQueries({queryKey:['focus']})})}export function useFocusClose(){const q=useQueryClient();return useMutation({mutationFn:({id,complete}:{id:number;complete:boolean})=>complete?focusApi.complete(id):focusApi.abandon(id),onSuccess:()=>q.invalidateQueries({queryKey:['focus']})})}
+
+export function useFocusPause(){const q=useQueryClient();return useMutation({mutationFn:focusApi.pause,onSuccess:()=>q.invalidateQueries({queryKey:['focus']})})}
+export function useFocusResume(){const q=useQueryClient();return useMutation({mutationFn:focusApi.resume,onSuccess:()=>q.invalidateQueries({queryKey:['focus']})})}

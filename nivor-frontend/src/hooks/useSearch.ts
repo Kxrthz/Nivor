@@ -1,0 +1,2 @@
+import { useEffect,useState } from 'react';import { useQuery } from '@tanstack/react-query';import { searchApi } from '../lib/api/searchApi'
+export function useSearch(q:string){const[debounced,setDebounced]=useState(q);useEffect(()=>{const t=window.setTimeout(()=>setDebounced(q),250);return()=>window.clearTimeout(t)},[q]);return useQuery({queryKey:['search',debounced],queryFn:()=>searchApi.search(debounced),enabled:debounced.trim().length>0,staleTime:10_000})}

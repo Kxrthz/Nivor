@@ -1,0 +1,2 @@
+import { api } from '../api';import type { Notification,NotificationCount } from '../../types/advanced'
+export const notificationApi={list:async()=>api.get<Notification[]>('/notifications',{params:{unreadOnly:false}}).then(r=>r.data),count:async()=>api.get<NotificationCount>('/notifications/unread-count').then(r=>r.data),read:async(id:number)=>api.patch<Notification>(`/notifications/${id}/read`).then(r=>r.data),readAll:async()=>api.patch('/notifications/read-all').then(r=>r.data),remove:async(id:number)=>api.delete(`/notifications/${id}`)}

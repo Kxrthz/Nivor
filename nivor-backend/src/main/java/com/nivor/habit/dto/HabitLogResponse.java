@@ -1,0 +1,1 @@
+package com.nivor.habit.dto;import com.nivor.habit.HabitLog;import java.time.*;public record HabitLogResponse(Long id,Long habitId,LocalDate date,boolean completed,LocalDateTime createdAt){public static HabitLogResponse from(HabitLog l){return new HabitLogResponse(l.getId(),l.getHabit().getId(),l.getDate(),l.isCompleted(),l.getCreatedAt());}}

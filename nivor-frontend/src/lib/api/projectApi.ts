@@ -1,0 +1,3 @@
+import { api } from '../api';import type { Project,ProjectStatus } from '../../types/project'
+export type ProjectInput={name:string;description?:string|null;workspaceId?:number|null;status?:ProjectStatus;progress:number;deadline?:string|null}
+export const projectApi={list:async(params:{workspace?:number;status?:ProjectStatus}={})=>(await api.get<Project[]>('/projects',{params})).data,get:async(id:number)=>(await api.get<Project>(`/projects/${id}`)).data,create:async(input:ProjectInput)=>(await api.post<Project>('/projects',input)).data,update:async(id:number,input:ProjectInput)=>(await api.put<Project>(`/projects/${id}`,input)).data,remove:async(id:number)=>{await api.delete(`/projects/${id}`)}}

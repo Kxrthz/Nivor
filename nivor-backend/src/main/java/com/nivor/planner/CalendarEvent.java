@@ -1,0 +1,8 @@
+package com.nivor.planner;
+
+import com.nivor.common.entity.AuditedEntity;import com.nivor.user.User;import jakarta.persistence.*;import java.time.LocalDateTime;
+@Entity @Table(name="calendar_events",indexes={@Index(name="idx_event_user",columnList="user_id"),@Index(name="idx_event_start",columnList="start_time")})
+public class CalendarEvent extends AuditedEntity{
+ @ManyToOne(fetch=FetchType.LAZY,optional=false)@JoinColumn(name="user_id",nullable=false)private User user;@Column(nullable=false,length=180)private String title;@Column(length=4000)private String description;@Column(name="start_time",nullable=false)private LocalDateTime startTime;@Column(name="end_time",nullable=false)private LocalDateTime endTime;@Column(length=240)private String location;@Column(length=40)private String color;@Column(nullable=false)private boolean allDay;@Column(length=500)private String recurrenceRule;
+ protected CalendarEvent(){}public User getUser(){return user;}public void setUser(User v){user=v;}public String getTitle(){return title;}public void setTitle(String v){title=v;}public String getDescription(){return description;}public void setDescription(String v){description=v;}public LocalDateTime getStartTime(){return startTime;}public void setStartTime(LocalDateTime v){startTime=v;}public LocalDateTime getEndTime(){return endTime;}public void setEndTime(LocalDateTime v){endTime=v;}public String getLocation(){return location;}public void setLocation(String v){location=v;}public String getColor(){return color;}public void setColor(String v){color=v;}public boolean isAllDay(){return allDay;}public void setAllDay(boolean v){allDay=v;}public String getRecurrenceRule(){return recurrenceRule;}public void setRecurrenceRule(String v){recurrenceRule=v;}
+}

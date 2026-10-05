@@ -1,0 +1,1 @@
+package com.nivor.journal.dto;import com.nivor.journal.JournalMood;import jakarta.validation.constraints.*;import java.time.LocalDate;import java.util.List;public record JournalRequest(@Size(max=180)String title,@NotBlank@Size(max=100000)String content,JournalMood mood,List<@Size(max=40)String> tags,@NotNull LocalDate entryDate){}

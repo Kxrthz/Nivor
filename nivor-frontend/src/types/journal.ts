@@ -1,0 +1,1 @@
+export type JournalMood='HAPPY'|'NEUTRAL'|'SAD'|'ENERGETIC'|'TIRED';export type JournalEntry={id:number;title:string|null;content:string;mood:JournalMood|null;tags:string[];entryDate:string;createdAt:string;updatedAt:string}

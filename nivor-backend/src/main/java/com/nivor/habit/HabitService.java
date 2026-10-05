@@ -1,0 +1,11 @@
+package com.nivor.habit;
+import com.nivor.common.exception.ResourceNotFoundException;import com.nivor.habit.dto.*;import com.nivor.user.*;import java.time.LocalDate;import java.util.*;import org.springframework.stereotype.Service;import org.springframework.transaction.annotation.Transactional;
+@Service public class HabitService{
+private final HabitRepository habits;private final HabitLogRepository logs;private final UserService users;public HabitService(HabitRepository h,HabitLogRepository l,UserService u){habits=h;logs=l;users=u;}
+@Transactional(readOnly=true)public List<Habit> list(String email){return habits.findAllByUser_IdOrderByCreatedAtAsc(users.getByEmail(email).getId());}@Transactional(readOnly=true)public Habit get(String email,Long id){return owned(email,id);}
+@Transactional public Habit create(String email,HabitRequest r){Habit h=new Habit();h.setUser(users.getByEmail(email));apply(h,r);return habits.save(h);}@Transactional public Habit update(String email,Long id,HabitRequest r){Habit h=owned(email,id);apply(h,r);return h;}@Transactional public void delete(String email,Long id){Habit h=owned(email,id);logs.deleteAll(logs.findAllByHabit_IdOrderByDateDesc(id));habits.delete(h);}
+@Transactional public HabitLog log(String email,Long id,HabitLogRequest r){Habit h=owned(email,id);HabitLog l=logs.findByHabit_IdAndDate(id,r.date()).orElseGet(HabitLog::new);l.setHabit(h);l.setDate(r.date());l.setCompleted(r.completed());return logs.save(l);}
+@Transactional(readOnly=true)public List<HabitLog> logs(String email,Long id){owned(email,id);return logs.findAllByHabit_IdOrderByDateDesc(id);}@Transactional public HabitLog setLog(String email,Long id,LocalDate date,boolean completed){return log(email,id,new HabitLogRequest(date,completed));}
+private Habit owned(String email,Long id){return habits.findByIdAndUser_Id(id,users.getByEmail(email).getId()).orElseThrow(()->new ResourceNotFoundException("Habit not found"));}
+private void apply(Habit h,HabitRequest r){h.setName(r.name().trim());h.setDescription(r.description());h.setFrequency(r.frequency()==null?HabitFrequency.DAILY:r.frequency());h.setTargetCount(r.targetCount());h.setReminderTime(r.reminderTime());h.setColor(r.color());h.setActive(r.active()==null||r.active());}
+}

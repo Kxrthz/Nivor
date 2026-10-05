@@ -1,0 +1,3 @@
+import {useEffect} from 'react';import {useMutation,useQuery,useQueryClient} from '@tanstack/react-query';import {userApi,type ProfileInput} from '../lib/api/userApi';import {queryKeys} from '../lib/queryKeys';import {useAuthStore} from '../store/authStore'
+export function useProfile(){const query=useQuery({queryKey:queryKeys.profile,queryFn:userApi.me});const setUser=useAuthStore(s=>s.setUser);useEffect(()=>{if(query.data)setUser(query.data)},[query.data,setUser]);return query}
+export function useUpdateProfile(){const q=useQueryClient();const setUser=useAuthStore(s=>s.setUser);return useMutation({mutationFn:(input:ProfileInput)=>userApi.update(input),onSuccess:user=>{setUser(user);q.setQueryData(queryKeys.profile,user)}})}

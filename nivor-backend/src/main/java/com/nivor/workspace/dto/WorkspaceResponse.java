@@ -1,0 +1,1 @@
+package com.nivor.workspace.dto;import com.nivor.workspace.Workspace;import java.time.*;public record WorkspaceResponse(Long id,String name,String description,LocalDateTime createdAt,LocalDateTime updatedAt){public static WorkspaceResponse from(Workspace w){return new WorkspaceResponse(w.getId(),w.getName(),w.getDescription(),w.getCreatedAt(),w.getUpdatedAt());}}

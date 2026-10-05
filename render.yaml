@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: nivor-api
+    runtime: docker
+    dockerfilePath: ./nivor-backend/Dockerfile
+    dockerContext: ./nivor-backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: FRONTEND_URL
+        sync: false
+      - key: FILE_STORAGE_PROVIDER
+        value: local
+      - key: FILE_STORAGE_LOCAL_PATH
+        value: /var/data/nivor-uploads
+      - key: AI_PROVIDER
+        value: ""
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
+    disk:
+      name: nivor-uploads
+      mountPath: /var/data
+      sizeGB: 1

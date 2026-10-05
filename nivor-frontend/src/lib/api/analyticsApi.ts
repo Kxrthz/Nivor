@@ -1,0 +1,2 @@
+import { api } from '../api';import type { AnalyticsOverview } from '../../types/advanced'
+export const analyticsApi={overview:async(from?:string,to?:string)=>api.get<AnalyticsOverview>('/analytics/overview',{params:{from,to}}).then(r=>r.data),focus:async(from?:string,to?:string)=>api.get('/analytics/focus',{params:{from,to}}).then(r=>r.data),habits:async(from?:string,to?:string)=>api.get('/analytics/habits',{params:{from,to}}).then(r=>r.data),goals:async()=>api.get('/analytics/goals').then(r=>r.data)}

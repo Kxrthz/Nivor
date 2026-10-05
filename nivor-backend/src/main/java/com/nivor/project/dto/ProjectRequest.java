@@ -1,0 +1,1 @@
+package com.nivor.project.dto;import com.nivor.project.ProjectStatus;import jakarta.validation.constraints.*;import java.time.LocalDate;public record ProjectRequest(@NotBlank@Size(max=180)String name,@Size(max=4000)String description,Long workspaceId,ProjectStatus status,@Min(0)@Max(100)int progress,LocalDate deadline){}

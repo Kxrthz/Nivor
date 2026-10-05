@@ -1,0 +1,1 @@
+export type HabitFrequency='DAILY'|'WEEKLY'|'CUSTOM';export type Habit={id:number;name:string;description:string|null;frequency:HabitFrequency;targetCount:number;reminderTime:string|null;color:string|null;active:boolean;createdAt:string;updatedAt:string};export type HabitLog={id:number;habitId:number;date:string;completed:boolean;createdAt:string}

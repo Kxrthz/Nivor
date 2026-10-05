@@ -1,0 +1,3 @@
+import { api } from '../api';import type { JournalEntry,JournalMood } from '../../types/journal'
+export type JournalInput={title?:string|null;content:string;mood?:JournalMood|null;tags:string[];entryDate:string}
+export const journalApi={list:async(params:{date?:string;from?:string;to?:string}={})=>(await api.get<JournalEntry[]>('/journal',{params})).data,get:async(id:number)=>(await api.get<JournalEntry>(`/journal/${id}`)).data,create:async(input:JournalInput)=>(await api.post<JournalEntry>('/journal',input)).data,update:async(id:number,input:JournalInput)=>(await api.put<JournalEntry>(`/journal/${id}`,input)).data,remove:async(id:number)=>{await api.delete(`/journal/${id}`)}}

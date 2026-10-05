@@ -1,0 +1,2 @@
+import { api } from '../api';import type { Workspace,WorkspaceInput } from '../../types/workspace'
+export const workspaceApi={list:async()=>(await api.get<Workspace[]>('/workspaces')).data,get:async(id:number)=>(await api.get<Workspace>(`/workspaces/${id}`)).data,create:async(input:WorkspaceInput)=>(await api.post<Workspace>('/workspaces',input)).data,update:async(id:number,input:WorkspaceInput)=>(await api.put<Workspace>(`/workspaces/${id}`,input)).data,remove:async(id:number)=>{await api.delete(`/workspaces/${id}`)}}

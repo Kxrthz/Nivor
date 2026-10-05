@@ -1,0 +1,1 @@
+package com.nivor.habit.dto;import com.nivor.habit.HabitFrequency;import jakarta.validation.constraints.*;import java.time.LocalTime;public record HabitRequest(@NotBlank@Size(max=120)String name,@Size(max=2000)String description,HabitFrequency frequency,@Min(1)@Max(20)int targetCount,LocalTime reminderTime,@Size(max=40)String color,Boolean active){}

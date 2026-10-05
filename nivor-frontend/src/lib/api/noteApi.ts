@@ -1,0 +1,3 @@
+import { api } from '../api';import type { Note,NoteInput } from '../../types/note'
+export type NoteFilters={search?:string;favorite?:boolean;pinned?:boolean;category?:string;tag?:string}
+export const noteApi={list:async(filters:NoteFilters={})=>(await api.get<Note[]>('/notes',{params:filters})).data,get:async(id:number)=>(await api.get<Note>(`/notes/${id}`)).data,create:async(input:NoteInput)=>(await api.post<Note>('/notes',input)).data,update:async(id:number,input:NoteInput)=>(await api.put<Note>(`/notes/${id}`,input)).data,favorite:async(id:number)=>(await api.patch<Note>(`/notes/${id}/favorite`)).data,pin:async(id:number)=>(await api.patch<Note>(`/notes/${id}/pin`)).data,remove:async(id:number)=>{await api.delete(`/notes/${id}`)}}

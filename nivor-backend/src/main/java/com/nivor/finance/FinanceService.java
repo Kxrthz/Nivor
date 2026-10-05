@@ -1,0 +1,27 @@
+package com.nivor.finance;
+
+import com.nivor.common.exception.ResourceNotFoundException;import com.nivor.finance.FinanceDtos.*;import com.nivor.user.UserService;import java.math.BigDecimal;import java.time.LocalDate;import java.util.*;import java.util.stream.Collectors;import org.springframework.stereotype.Service;import org.springframework.transaction.annotation.Transactional;
+
+@Service @Transactional
+public class FinanceService{
+ private final TransactionRepository tx;private final BudgetRepository budgets;private final SavingsGoalRepository savings;private final UserService users;
+ public FinanceService(TransactionRepository t,BudgetRepository b,SavingsGoalRepository s,UserService u){tx=t;budgets=b;savings=s;users=u;}
+ public List<TransactionView> transactions(String email){return tx.findAllByUser_IdOrderByTransactionDateDesc(uid(email)).stream().limit(500).map(TransactionView::from).toList();}
+ public TransactionView createTransaction(String email,TransactionRequest r){Transaction t=new Transaction();t.setUser(users.getByEmail(email));apply(t,r);return TransactionView.from(tx.save(t));}
+ public TransactionView updateTransaction(String email,long id,TransactionRequest r){Transaction t=tx.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Transaction not found"));apply(t,r);return TransactionView.from(t);}
+ public void deleteTransaction(String email,long id){tx.delete(tx.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Transaction not found")));}
+ private void apply(Transaction t,TransactionRequest r){t.setType(r.type());t.setAmount(r.amount());t.setCategory(r.category().trim());t.setDescription(r.description());t.setTransactionDate(r.transactionDate());}
+ public List<BudgetView> budgets(String email){return budgets.findAllByUser_IdOrderByStartDateDesc(uid(email)).stream().limit(200).map(BudgetView::from).toList();}
+ public BudgetView createBudget(String email,BudgetRequest r){validatePeriod(r.startDate(),r.endDate());Budget b=new Budget();b.setUser(users.getByEmail(email));apply(b,r);return BudgetView.from(budgets.save(b));}
+ public BudgetView updateBudget(String email,long id,BudgetRequest r){validatePeriod(r.startDate(),r.endDate());Budget b=budgets.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Budget not found"));apply(b,r);return BudgetView.from(b);}
+ public void deleteBudget(String email,long id){budgets.delete(budgets.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Budget not found")));}
+ private void apply(Budget b,BudgetRequest r){b.setCategory(r.category().trim());b.setAmount(r.amount());b.setPeriod(r.period());b.setStartDate(r.startDate());b.setEndDate(r.endDate());}
+ private void validatePeriod(LocalDate a,LocalDate b){if(b.isBefore(a))throw new IllegalArgumentException("Budget end date must be on or after its start date");}
+ public List<SavingsView> savings(String email){return savings.findAllByUser_IdOrderByDeadlineAsc(uid(email)).stream().limit(200).map(SavingsView::from).toList();}
+ public SavingsView createSavings(String email,SavingsRequest r){SavingsGoal s=new SavingsGoal();s.setUser(users.getByEmail(email));apply(s,r);return SavingsView.from(savings.save(s));}
+ public SavingsView updateSavings(String email,long id,SavingsRequest r){SavingsGoal s=savings.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Savings goal not found"));apply(s,r);return SavingsView.from(s);}
+ public void deleteSavings(String email,long id){savings.delete(savings.findByIdAndUser_Id(id,uid(email)).orElseThrow(()->new ResourceNotFoundException("Savings goal not found")));}
+ private void apply(SavingsGoal s,SavingsRequest r){s.setName(r.name().trim());s.setTargetAmount(r.targetAmount());s.setCurrentAmount(r.currentAmount());s.setDeadline(r.deadline());}
+ @Transactional(readOnly=true) public Summary summary(String email){Long id=uid(email);List<Transaction> all=tx.findAllByUser_IdOrderByTransactionDateDesc(id);BigDecimal income=all.stream().filter(x->x.getType()==TransactionType.INCOME).map(Transaction::getAmount).reduce(BigDecimal.ZERO,BigDecimal::add);BigDecimal expenses=all.stream().filter(x->x.getType()==TransactionType.EXPENSE).map(Transaction::getAmount).reduce(BigDecimal.ZERO,BigDecimal::add);Map<String,BigDecimal> grouped=all.stream().filter(x->x.getType()==TransactionType.EXPENSE).collect(Collectors.groupingBy(Transaction::getCategory,Collectors.mapping(Transaction::getAmount,Collectors.reducing(BigDecimal.ZERO,BigDecimal::add))));List<CategoryTotal> categories=grouped.entrySet().stream().map(e->new CategoryTotal(e.getKey(),e.getValue())).sorted(Comparator.comparing(CategoryTotal::amount).reversed()).toList();List<BudgetUsage> usage=budgets.findAllByUser_IdOrderByStartDateDesc(id).stream().filter(b->!LocalDate.now().isBefore(b.getStartDate())&&!LocalDate.now().isAfter(b.getEndDate())).map(b->{BigDecimal spent=all.stream().filter(t->t.getType()==TransactionType.EXPENSE&&t.getCategory().equalsIgnoreCase(b.getCategory())&&!t.getTransactionDate().isBefore(b.getStartDate())&&!t.getTransactionDate().isAfter(b.getEndDate())).map(Transaction::getAmount).reduce(BigDecimal.ZERO,BigDecimal::add);return new BudgetUsage(b.getId(),b.getCategory(),b.getAmount(),spent,b.getAmount().subtract(spent));}).toList();return new Summary(income,expenses,income.subtract(expenses),categories,usage);}
+ private Long uid(String e){return users.getByEmail(e).getId();}
+}

@@ -1,0 +1,2 @@
+package com.nivor.focus;import java.time.LocalDateTime;import java.util.*;import org.springframework.data.jpa.repository.JpaRepository;
+public interface FocusSessionRepository extends JpaRepository<FocusSession,Long>{List<FocusSession> findAllByUser_IdOrderByStartedAtDesc(Long id);Optional<FocusSession> findByIdAndUser_Id(Long id,Long userId);long countByUser_IdAndStatusAndStartedAtBetween(Long id,FocusStatus status,LocalDateTime from,LocalDateTime to);}

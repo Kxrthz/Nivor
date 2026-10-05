@@ -1,0 +1,3 @@
+export type TaskStatus = 'TODO'|'IN_PROGRESS'|'COMPLETED'|'ARCHIVED'; export type TaskPriority = 'LOW'|'MEDIUM'|'HIGH'
+export type Task = { id: number; title: string; description: string | null; status: TaskStatus; priority: TaskPriority; dueDate: string | null; dueTime: string | null; category: string | null; tags: string[]; projectId: number | null; goalId: number | null; parentTaskId: number | null; completedAt: string | null; createdAt: string; updatedAt: string }
+export type TaskInput = Pick<Task,'title'|'description'|'priority'|'dueDate'|'dueTime'|'category'|'tags'|'projectId'|'goalId'|'parentTaskId'> & { status?: TaskStatus }

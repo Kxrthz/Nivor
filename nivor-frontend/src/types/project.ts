@@ -1,0 +1,1 @@
+export type ProjectStatus='PLANNED'|'ACTIVE'|'ON_HOLD'|'COMPLETED'|'ARCHIVED';export type Project={id:number;workspaceId:number|null;name:string;description:string|null;status:ProjectStatus;progress:number;deadline:string|null;createdAt:string;updatedAt:string}
